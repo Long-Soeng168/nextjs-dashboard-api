@@ -9,6 +9,7 @@ export const CategorySchema = z.object({
   title: z.string(),
   title_kh: z.string(),
   order_index: z.coerce.number(),
+  status: z.coerce.number(),
   created_at: z.string(),
   updated_at: z.string(),
   image: z.string().optional().nullable(), // Optional image URL

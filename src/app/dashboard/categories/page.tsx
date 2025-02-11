@@ -11,9 +11,9 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import AddNewButton from "./components/add-new-button";
 import TableData from "./components/table-data";
-import { Search } from "./components/search";
 import { FilterButton } from "./components/filter-button";
 import MyLoadingAnimation from "./components/my-loading-animation";
+import { MySearchTableData } from "@/components/my-search-table-data";
 
 const Page = () => {
   return (
@@ -39,8 +39,8 @@ const Page = () => {
         <AddNewButton />
       </header>
 
-      <div className="flex gap-2">
-        <Search />
+      <div className="flex gap-2 items-center">
+        <MySearchTableData />
         <FilterButton />
       </div>
       <Suspense fallback={<MyLoadingAnimation />}>

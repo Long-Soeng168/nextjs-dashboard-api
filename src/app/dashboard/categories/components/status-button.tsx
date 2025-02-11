@@ -23,25 +23,30 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-const DeleteButton = ({ id }: { id: number }) => {
+const StatusButton = ({ id, status }: { id: number; status: number }) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleDelete = async () => {
+  const handleUpdateStatus = async (status: number) => {
     setIsSubmitting(true);
     try {
-      const response = await fetch(`${BASE_BACKEND_API_URL}categories/${id}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `${BASE_BACKEND_API_URL}categories/${id}/update_status?status=${status}`,
+        {
+          method: "POST",
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to delete category");
+        throw new Error(
+          errorData.message || "Failed to update status category"
+        );
       }
 
       toast({
-        title: "Deleted successfully.",
+        title: "Update status successfully.",
         variant: "success",
       });
       revalidateCategories("/dashboard/categories");
@@ -61,35 +66,45 @@ const DeleteButton = ({ id }: { id: number }) => {
       <TooltipProvider delayDuration={0}>
         <Tooltip>
           <TooltipTrigger asChild>
-            <AlertDialogTrigger asChild>
-              <Button variant="ghost" className="text-destructive" size="icon">
-                <Trash2Icon />
+            <AlertDialogTrigger className="cursor-pointer" asChild>
+              <Button
+                variant="outline"
+                className={status == 1 ? "text-green-600" : "text-red-400"}
+                size="sm"
+              >
+                {status == 1 ? <p>Public</p> : <p>Not-Public</p>}
               </Button>
             </AlertDialogTrigger>
           </TooltipTrigger>
           <TooltipContent side="bottom">
-            <p>Delete</p>
+            <p>Update Status</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
 
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you sure? Delete ID : {id}</AlertDialogTitle>
+          <AlertDialogTitle>Are you sure? Update ID : {id}</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete the
-            category and remove its data from our servers.
+            This action will update your record status.
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter>
+        <AlertDialogFooter className="sm:space-y-0 space-y-2">
           <AlertDialogCancel disabled={isSubmitting}>Cancel</AlertDialogCancel>
           <AlertDialogAction
-            onClick={handleDelete}
+            onClick={() => handleUpdateStatus(0)}
             disabled={isSubmitting}
-            autoFocus
             className="bg-destructive focus:ring-2 ring-offset-2 text-destructive-foreground"
           >
-            {isSubmitting ? "Deleting..." : "Delete"}
+            {isSubmitting ? "Updating..." : "Not-Public"}
+          </AlertDialogAction>
+          <AlertDialogAction
+            onClick={() => handleUpdateStatus(1)}
+            disabled={isSubmitting}
+            autoFocus
+            className="bg-green-600 focus:ring-2 ring-offset-2 text-white"
+          >
+            {isSubmitting ? "Updating..." : "Public"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -97,4 +112,4 @@ const DeleteButton = ({ id }: { id: number }) => {
   );
 };
 
-export default DeleteButton;
+export default StatusButton;

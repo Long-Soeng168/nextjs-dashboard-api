@@ -41,7 +41,7 @@ const EditButton = ({ id }: { id: number }) => {
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      {isOpen && <div className="fixed inset-0 bg-black/70 z-40" />}
+      {isOpen && <div className="fixed inset-0 bg-black/80 z-40" />}
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="hidden"></DialogTitle>

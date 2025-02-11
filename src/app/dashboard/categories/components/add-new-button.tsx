@@ -22,7 +22,7 @@ const AddNewButton = () => {
           Add New
         </Button>
       </DialogTrigger>
-      {isOpen && <div className="fixed inset-0 bg-black/70 z-40" />}
+      {isOpen && <div className="fixed inset-0 bg-black/80 z-40" />}
       {/* Custom dark background */}
       <DialogContent className="z-50">
         <DialogHeader>

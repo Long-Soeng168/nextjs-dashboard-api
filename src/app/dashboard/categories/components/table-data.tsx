@@ -20,6 +20,7 @@ import MyNoDataIcon from "@/components/my-no-data-icon";
 import MyPagination from "@/components/my-pagination";
 import MyNoImage from "@/components/my-no-image";
 import { PaginationLinkType } from "@/types/pagination-link-type";
+import StatusButton from "./status-button";
 
 const TableData = async () => {
   const result = await fetchCategories();
@@ -43,6 +44,7 @@ const TableData = async () => {
             <TableHead>Name Khmer</TableHead>
             <TableHead>Order Index</TableHead>
             <TableHead>Parent</TableHead>
+            <TableHead>Status</TableHead>
             <TableHead>Created At</TableHead>
             <TableHead>Created By</TableHead>
             <TableHead>Last Updated</TableHead>
@@ -80,6 +82,9 @@ const TableData = async () => {
                 <TableCell>{category.order_index || "--"}</TableCell>
                 <TableCell>{category.parent_code || "--"}</TableCell>
                 <TableCell>
+                  <StatusButton id={category.id} status={category.status} />
+                </TableCell>
+                <TableCell>
                   {moment(category.created_at).format("D-MMM-YYYY")}
                 </TableCell>
                 <TableCell>...</TableCell>
@@ -91,7 +96,7 @@ const TableData = async () => {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={12}>
+              <TableCell colSpan={13}>
                 <MyNoDataIcon />
               </TableCell>
             </TableRow>
