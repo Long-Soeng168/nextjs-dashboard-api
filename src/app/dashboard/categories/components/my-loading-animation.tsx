@@ -9,9 +9,9 @@
 // };
 
 // export default MyLoadingAnimation;
-'use client'
+"use client";
 import Lottie from "lottie-react";
-import animationData from "/public/animations/loading-animation2.json";
+import animationData from "@/animations/loading-animation2.json";
 export default function MyLoadingAnimation() {
   return (
     <div className="flex flex-col items-center justify-center w-full">
@@ -23,5 +23,3 @@ export default function MyLoadingAnimation() {
     </div>
   );
 }
-
-

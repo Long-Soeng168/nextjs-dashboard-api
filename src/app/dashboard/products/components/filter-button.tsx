@@ -8,7 +8,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import CreateCategoryForm from './form/create'
 import Filter from "./form/filter";
 
 export function FilterButton() {

@@ -117,7 +117,7 @@ export default function CreateCategoryForm() {
     if (values.parent_code) {
       formData.append("parent_code", values.parent_code);
     }
-    if (files && files.length > 0) {
+    if (files && files?.length > 0) {
       formData.append("image", files[0]); // Append the first file
     }
 
@@ -259,7 +259,7 @@ export default function CreateCategoryForm() {
                             )}
                           >
                             {field.value
-                              ? categories.find(
+                              ? categories?.find(
                                   (category) => category.code === field.value
                                 )?.title
                               : "Select category"}
@@ -289,7 +289,7 @@ export default function CreateCategoryForm() {
                                 />
                                 {`N/A`}
                               </CommandItem>
-                              {categories.map((category) => (
+                              {categories?.map((category) => (
                                 <CommandItem
                                   value={category.title}
                                   key={category.code}

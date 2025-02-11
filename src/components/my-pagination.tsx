@@ -10,86 +10,73 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { PaginationLinkType } from "@/types/pagination-link-type";
 
-const MyPagination = ({
-  links,
-  from,
-  to,
-  total,
-}: {
-  links: any;
-  from: any;
-  to: any;
-  total: any;
-}) => {
-  if (total < 1) return;
+// Define API Pagination Response Types
+
+type PaginationDataType = {
+  links: PaginationLinkType[];
+  from: number;
+  to: number;
+  total: number;
+  last_page: number;
+}
+
+const MyPagination = ({ links, from, to, total, last_page }: PaginationDataType) => {
+  if (total < 1) return null; // Prevent rendering if no results
+
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { replace } = useRouter();
 
-  // Retrieve the current page from the searchParams or default to 1
+  // Get current page from query params, default to page 1
   const currentPage = Number(searchParams.get("page")) || 1;
 
-  // Generate the page URL with updated page parameter
-  const createPageURL = (pageNumber) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("page", pageNumber);
+  // Function to update the page in URL
+  const createPageURL = (pageNumber: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", pageNumber.toString());
     return `${pathname}?${params.toString()}`;
   };
 
-  // Check if 'Next' or 'Previous' exists in the pagination
+  // Check previous and next page availability
   const hasPreviousPage = currentPage > 1;
-  const lastPage = links && links[links?.length - 2]?.label;
-  const hasNextPage = currentPage < Number(lastPage);
+  const hasNextPage = currentPage < last_page;
 
-  const handlePaginationChange = (pageNumber) => {
-    const newURL = createPageURL(pageNumber);
-    replace(newURL); // Update the URL without reloading the page
+  // Function to handle pagination clicks
+  const handlePaginationChange = (pageNumber: number | null) => {
+    if (pageNumber) {
+      replace(createPageURL(pageNumber));
+    }
   };
 
   return (
-    <div className="flex items-center mt-4 justify-center w-full md:justify-between ">
+    <div className="flex items-center mt-3 justify-center w-full md:justify-between">
       <p className="hidden whitespace-nowrap md:block">
-        {`Showing`} {from} {`to`} {to} {`of`} {total} {`results`}
+        {`Showing ${from} to ${to} of ${total} results`}
       </p>
       <Pagination className="w-auto mx-0">
         <PaginationContent>
           {/* Previous Button */}
           <PaginationItem>
             <PaginationPrevious
-              title={`Previous`}
-              className={hasPreviousPage ? "text-primary font-bold" : ""}
-              onClick={() =>
-                hasPreviousPage && handlePaginationChange(currentPage - 1)
-              }
+              title="Previous"
+              className={hasPreviousPage ? "text-primary font-bold" : "opacity-50 pointer-events-none"}
+              onClick={() => handlePaginationChange(currentPage - 1)}
             />
           </PaginationItem>
 
           {/* Page Links */}
           {links
-            ?.filter(
-              (link) =>
-                !link.label.includes("Previous") && !link.label.includes("Next")
-            )
+            .filter((link) => !link.label.includes("Previous") && !link.label.includes("Next"))
             .map((link, index) => {
-              const pageNumber =
-                link.label === "..." ? null : Number(link.label);
-
+              const pageNumber = link.url ? Number(new URL(link.url).searchParams.get("page")) : null;
               return (
-                <PaginationItem
-                  className={`${link.active ? "" : "hidden"}  md:block`}
-                  key={index}
-                >
+                <PaginationItem key={index} className={`${link.active ? "" : "hidden"} md:block`}>
                   <PaginationLink
-                    onClick={() =>
-                      pageNumber && handlePaginationChange(pageNumber)
-                    }
+                    onClick={() => handlePaginationChange(pageNumber)}
                     dangerouslySetInnerHTML={{ __html: link.label }}
-                    className={
-                      link.active
-                        ? "text-primary border-primary border-2 font-bold"
-                        : ""
-                    }
+                    className={link.active ? "text-primary border-primary border-2 font-bold" : ""}
                   />
                 </PaginationItem>
               );
@@ -98,11 +85,9 @@ const MyPagination = ({
           {/* Next Button */}
           <PaginationItem>
             <PaginationNext
-              title={`Next`}
-              className={hasNextPage ? "text-primary font-bold" : ""}
-              onClick={() =>
-                hasNextPage && handlePaginationChange(currentPage + 1)
-              }
+              title="Next"
+              className={hasNextPage ? "text-primary font-bold" : "opacity-50 pointer-events-none"}
+              onClick={() => handlePaginationChange(currentPage + 1)}
             />
           </PaginationItem>
         </PaginationContent>

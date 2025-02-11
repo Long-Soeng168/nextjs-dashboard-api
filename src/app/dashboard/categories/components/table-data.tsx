@@ -19,14 +19,16 @@ import moment from "moment";
 import MyNoDataIcon from "@/components/my-no-data-icon";
 import MyPagination from "@/components/my-pagination";
 import MyNoImage from "@/components/my-no-image";
+import { PaginationLinkType } from "@/types/pagination-link-type";
 
 const TableData = async () => {
   const result = await fetchCategories();
   const categories: Category[] = result.data;
-  const links = result.links;
-  const from = result.from;
-  const to = result.to;
-  const total = result.total;
+  const links: PaginationLinkType[] = result.links;
+  const from: number = result.from;
+  const to: number = result.to;
+  const total: number = result.total;
+  const last_page: number = result.last_page;
 
   return (
     <>
@@ -72,11 +74,11 @@ const TableData = async () => {
                     <MyNoImage iconWidth="w-10" />
                   )}
                 </TableCell>
-                <TableCell>{category.code || '--' }</TableCell>
-                <TableCell>{category.title || '--' }</TableCell>
-                <TableCell>{category.title_kh || '--' }</TableCell>
-                <TableCell>{category.order_index || '--' }</TableCell>
-                <TableCell>{category.parent_code || '--' }</TableCell>
+                <TableCell>{category.code || "--"}</TableCell>
+                <TableCell>{category.title || "--"}</TableCell>
+                <TableCell>{category.title_kh || "--"}</TableCell>
+                <TableCell>{category.order_index || "--"}</TableCell>
+                <TableCell>{category.parent_code || "--"}</TableCell>
                 <TableCell>
                   {moment(category.created_at).format("D-MMM-YYYY")}
                 </TableCell>
@@ -96,7 +98,13 @@ const TableData = async () => {
           )}
         </TableBody>
       </Table>
-      <MyPagination links={links} from={from} to={to} total={total} />
+      <MyPagination
+        links={links}
+        from={from}
+        to={to}
+        total={total}
+        last_page={last_page}
+      />
     </>
   );
 };
