@@ -1,13 +1,13 @@
-'use client'
-import React from 'react'
+"use client";
+import React, { useState } from "react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
-import { Button } from '@/components/ui/button'
-import { EditIcon } from 'lucide-react'
+} from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
+import { EditIcon } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -15,36 +15,42 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import EditCategoryForm from './form/edit'
+} from "@/components/ui/dialog";
+import EditCategoryForm from "./form/edit";
 
-const EditButton = () => {
+const EditButton = ({ id }: { id: number }) => {
+  const [isOpen, setIsOpen] = useState(false);
   return (
-
-    <Dialog>
+    <Dialog modal={false} open={isOpen} onOpenChange={setIsOpen}>
       <TooltipProvider delayDuration={0}>
-        <Tooltip >
+        <Tooltip>
           <TooltipTrigger asChild>
             <DialogTrigger asChild>
-              <Button variant='ghost' className='text-primary' size='icon' onClick={() => console.log('clicked')}>
+              <Button
+                variant="ghost"
+                className="text-primary"
+                size="icon"
+                onClick={() => console.log("clicked")}
+              >
                 <EditIcon />
               </Button>
             </DialogTrigger>
           </TooltipTrigger>
-          <TooltipContent side='bottom'>
+          <TooltipContent side="bottom">
             <p>Edit</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
+      {isOpen && <div className="fixed inset-0 bg-black/70 z-40" />}
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className='hidden'></DialogTitle>
-          <DialogDescription className='hidden'></DialogDescription>
-          <EditCategoryForm />
+          <DialogTitle className="hidden"></DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
+          <EditCategoryForm id={id} />
         </DialogHeader>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};
 
-export default EditButton
+export default EditButton;

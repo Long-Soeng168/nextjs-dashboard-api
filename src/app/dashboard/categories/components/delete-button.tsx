@@ -82,7 +82,7 @@ const DeleteButton = ({ id }: { id: number }) => {
                   onClick={handleDelete}
                   disabled={isSubmitting}
                   autoFocus
-                  className="bg-destructive text-destructive-foreground"
+                  className="bg-destructive focus:ring-2 ring-offset-2 text-destructive-foreground"
                 >
                   {isSubmitting ? "Deleting..." : "Delete"}
                 </AlertDialogAction>

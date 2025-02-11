@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -28,7 +28,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Check, ChevronsUpDown, CloudUpload, Paperclip } from "lucide-react";
+import { Check, ChevronsUpDown, CloudUpload } from "lucide-react";
 import {
   FileInput,
   FileUploader,
@@ -40,6 +40,11 @@ import { revalidateCategories } from "@/lib/revalidate";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
 import { ErrorResponseType } from "@/types/error-respone-type";
+import axios from "axios";
+import MyProgressBar from "@/components/my-progress-bar";
+import { fetchCategories } from "@/service/category-service";
+import { Category } from "@/types/category-type";
+import MyLoadingAnimation from "../my-loading-animation";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required").max(255),
@@ -51,17 +56,41 @@ const formSchema = z.object({
 });
 
 export default function CreateCategoryForm() {
-  const categories = [
-    { title: "English", code: "a" },
-    { title: "French", code: "aa" },
-    { title: "German", code: "de" },
-    { title: "Spanish", code: "es" },
-  ] as const;
+  const [loadingCategories, setLoadingCategories] = useState(false);
+  const [categories, setCategories] = useState<Category[] | []>([]);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleFetchCategories = async () => {
+    try {
+      setLoadingCategories(true);
+      const result = await fetchCategories({ perPage: "200" });
+      if (!result.data) {
+        toast({
+          title: "Fail fetching Categories.",
+          variant: "destructive",
+        });
+        return;
+      }
+      setCategories(result.data);
+    } catch (error) {
+      console.log(error);
+      toast({
+        title: "Fail fetching Categories.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingCategories(false);
+    }
+  };
+
+  useEffect(() => {
+    handleFetchCategories();
+  }, [refreshKey]);
 
   const { toast } = useToast();
   const [files, setFiles] = useState<File[] | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -77,7 +106,6 @@ export default function CreateCategoryForm() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
-    setError(null);
 
     const formData = new FormData();
     formData.append("title", values.title);
@@ -94,27 +122,22 @@ export default function CreateCategoryForm() {
     }
 
     try {
-      const response = await fetch(`${BASE_BACKEND_API_URL}categories`, {
-        method: "POST",
-        body: formData,
-      });
-      // const result = await response.json();
-      // console.log(result);
-
-      if (!response.ok) {
-        const errorData: ErrorResponseType = await response.json();
-        console.log(errorData);
-
-        const firstError = Object.values(errorData.errors)[0][0];
-        toast({
-          title: `${errorData.message || "Something went wrong"}`,
-          description: `${firstError}`,
-          variant: "destructive",
-        });
-        return;
-        // throw new Error(firstError || "Failed to create category");
-      }
-
+      const response = await axios.post(
+        `${BASE_BACKEND_API_URL}categories`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          onUploadProgress: (progressEvent: any) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setUploadProgress(percentCompleted);
+          },
+        }
+      );
+      setUploadProgress(0);
       toast({
         title: "Create Successfully.",
         variant: "success",
@@ -122,13 +145,27 @@ export default function CreateCategoryForm() {
       form.reset();
       setFiles(null);
       revalidateCategories("/dashboard/categories");
-    } catch (err) {
-      toast({
-        title: `${err || "Something went wrong"}`,
-        variant: "destructive",
-      });
+      setRefreshKey((prev) => prev + 1);
+    } catch (error: any) {
+      console.log(error);
+      if (error.response) {
+        const errorData: ErrorResponseType = error.response.data;
+        const firstError = Object.values(errorData.errors)[0][0];
+        toast({
+          title: `${errorData.message || "Something went wrong"}`,
+          description: `${firstError}`,
+          variant: "destructive",
+        });
+      } else if (error.request) {
+        // Request was made, but no response was received
+        console.error("No Response:", error.request);
+      } else {
+        // Something else happened while setting up the request
+        console.error("Axios Error:", error.message);
+      }
     } finally {
       setIsSubmitting(false);
+      setUploadProgress(0);
     }
   };
 
@@ -178,7 +215,7 @@ export default function CreateCategoryForm() {
                 <FormItem>
                   <FormLabel>Code</FormLabel>
                   <FormControl>
-                    <Input placeholder="ex: DK" type="text" {...field} />
+                    <Input placeholder="ex: CP" type="text" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -201,82 +238,86 @@ export default function CreateCategoryForm() {
             />
           </div>
           <div className="col-span-6">
-            <FormField
-              control={form.control}
-              name="parent_code"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Parent Category</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          className={cn(
-                            "w-full justify-between",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value
-                            ? categories.find(
-                                (language) => language.code === field.value
-                              )?.title
-                            : "Select language"}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[200px] p-0">
-                      <Command>
-                        <CommandInput placeholder="Search language..." />
-                        <CommandList>
-                          <CommandEmpty>No language found.</CommandEmpty>
-                          <CommandGroup>
-                            <CommandItem
-                              value={``}
-                              onSelect={() => {
-                                form.setValue("parent_code", "");
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  "" === field.value
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                )}
-                              />
-                              {`N/A`}
-                            </CommandItem>
-                            {categories.map((language) => (
+            {loadingCategories ? (
+              <MyLoadingAnimation />
+            ) : (
+              <FormField
+                control={form.control}
+                name="parent_code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Parent category</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className={cn(
+                              "w-full justify-between",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            {field.value
+                              ? categories.find(
+                                  (category) => category.code === field.value
+                                )?.title
+                              : "Select category"}
+                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[200px] p-0">
+                        <Command>
+                          <CommandInput placeholder="Search category..." />
+                          <CommandList>
+                            <CommandEmpty>No category found.</CommandEmpty>
+                            <CommandGroup>
                               <CommandItem
-                                value={language.title}
-                                key={language.code}
+                                value={``}
                                 onSelect={() => {
-                                  form.setValue("parent_code", language.code);
+                                  form.setValue("parent_code", "");
                                 }}
                               >
                                 <Check
                                   className={cn(
                                     "mr-2 h-4 w-4",
-                                    language.code === field.value
+                                    "" === field.value
                                       ? "opacity-100"
                                       : "opacity-0"
                                   )}
                                 />
-                                {language.title}
+                                {`N/A`}
                               </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                              {categories.map((category) => (
+                                <CommandItem
+                                  value={category.title}
+                                  key={category.code}
+                                  onSelect={() => {
+                                    form.setValue("parent_code", category.code);
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      category.code === field.value
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                  {category.title}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
           </div>
         </div>
         <FormField
@@ -345,10 +386,12 @@ export default function CreateCategoryForm() {
             </FormItem>
           )}
         />
+        {uploadProgress > 0 && (
+          <MyProgressBar uploadProgress={uploadProgress} />
+        )}
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Submitting..." : "Submit"}
         </Button>
-        {error && <p className="text-red-500">{error}</p>}
       </form>
     </Form>
   );
