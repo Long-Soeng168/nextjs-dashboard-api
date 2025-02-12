@@ -11,7 +11,7 @@ import { ScanEyeIcon } from 'lucide-react'
 
 const ViewButton = () => {
     return (
-        <TooltipProvider delayDuration={0}>
+        <TooltipProvider delayDuration={300}>
         <Tooltip >
           <TooltipTrigger asChild>
             <Button variant='ghost' className='text-gray-500' size='icon' onClick={() => console.log('clicked')}>

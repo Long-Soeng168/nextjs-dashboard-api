@@ -72,7 +72,7 @@ const MyPagination = ({ links, from, to, total, last_page }: PaginationDataType)
             .map((link, index) => {
               const pageNumber = link.url ? Number(new URL(link.url).searchParams.get("page")) : null;
               return (
-                <PaginationItem key={index} className={`${link.active ? "" : "hidden"} md:block`}>
+                <PaginationItem key={index} className={`${link.active ? "" : "hidden"} md:block cursor-pointer`}>
                   <PaginationLink
                     onClick={() => handlePaginationChange(pageNumber)}
                     dangerouslySetInnerHTML={{ __html: link.label }}

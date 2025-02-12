@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -13,6 +13,7 @@ import AddNewButton from "./components/add-new-button";
 import TableData from "./components/table-data";
 import { FilterButton } from "./components/filter-button";
 import { MySearchTableData } from "@/components/my-search-table-data";
+import MyLoadingAnimation from "./categories/components/my-loading-animation";
 
 const Page = () => {
   return (
@@ -38,11 +39,16 @@ const Page = () => {
         <AddNewButton />
       </header>
 
-      <div className="flex gap-2 items-center">
-        <MySearchTableData />
-        <FilterButton />
-      </div>
-      <TableData />
+      <Suspense fallback={<MyLoadingAnimation />}>
+        <div className="flex gap-2 items-center">
+          <MySearchTableData />
+          <FilterButton />
+        </div>
+      </Suspense>
+
+      <Suspense fallback={<MyLoadingAnimation />}>
+        <TableData />
+      </Suspense>
     </div>
   );
 };

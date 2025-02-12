@@ -22,7 +22,7 @@ const EditButton = ({ id }: { id: number }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <Dialog modal={false} open={isOpen} onOpenChange={setIsOpen}>
-      <TooltipProvider delayDuration={0}>
+      <TooltipProvider delayDuration={300}>
         <Tooltip>
           <TooltipTrigger asChild>
             <DialogTrigger asChild>

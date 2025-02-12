@@ -45,7 +45,6 @@ import MyProgressBar from "@/components/my-progress-bar";
 import { fetchCategories, fetchCategory } from "@/service/category-service";
 import { Category } from "@/types/category-type";
 import MyLoadingAnimation from "../my-loading-animation";
-import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required").max(255),
@@ -57,7 +56,6 @@ const formSchema = z.object({
 });
 
 export default function EditCategoryForm({ id }: { id: number }) {
-  const router = useRouter();
   const [loadingCategory, setLoadingCategory] = useState(false);
   const [category, setCategory] = useState<Category | null>(null);
 
@@ -69,7 +67,7 @@ export default function EditCategoryForm({ id }: { id: number }) {
   const handleFetchCategories = async () => {
     try {
       setLoadingCategories(true);
-      const resultCategories = await fetchCategories({ perPage: "200" });
+      const resultCategories = await fetchCategories({ per_page: "200" });
       if (!resultCategories.data) {
         toast({
           title: "Fail fetching Categories.",
@@ -108,7 +106,7 @@ export default function EditCategoryForm({ id }: { id: number }) {
         title_kh: resultCategory.title_kh,
         code: resultCategory.code,
         order_index: resultCategory.order_index,
-        parent_code: resultCategory.parent_code || '',
+        parent_code: resultCategory.parent_code || "",
       });
     } catch (error) {
       console.log(error);
@@ -183,7 +181,7 @@ export default function EditCategoryForm({ id }: { id: number }) {
       });
       form.reset();
       setFiles(null);
-      revalidateCategories("/dashboard/categories");
+      revalidateCategories("/dashboard/products/categories");
       setRefreshKey((prev) => prev + 1);
     } catch (error: any) {
       console.log(error);
@@ -218,7 +216,7 @@ export default function EditCategoryForm({ id }: { id: number }) {
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Title</FormLabel>
                   <FormControl>
                     <Input placeholder="ex: Computer" type="text" {...field} />
                   </FormControl>
@@ -233,7 +231,7 @@ export default function EditCategoryForm({ id }: { id: number }) {
               name="title_kh"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name Khmer</FormLabel>
+                  <FormLabel>Title Khmer</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="ex: កុំព្យូទ័រ"

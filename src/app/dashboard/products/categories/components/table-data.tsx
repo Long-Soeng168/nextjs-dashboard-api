@@ -22,8 +22,26 @@ import MyNoImage from "@/components/my-no-image";
 import { PaginationLinkType } from "@/types/pagination-link-type";
 import StatusButton from "./status-button";
 
-const TableData = async () => {
-  const result = await fetchCategories();
+const TableData = async ({
+  search,
+  page,
+  sort_by,
+  parent_code,
+  status,
+}: {
+  search: string;
+  page: string;
+  sort_by: string;
+  parent_code: string;
+  status: string;
+}) => {
+  const result = await fetchCategories({
+    search: search,
+    page: page,
+    sort_by: sort_by,
+    parent_code: parent_code,
+    status: status,
+  });
   const categories: Category[] = result.data;
   const links: PaginationLinkType[] = result.links;
   const from: number = result.from;
@@ -40,8 +58,8 @@ const TableData = async () => {
             <TableHead className="text-left">Action</TableHead>
             <TableHead>Image</TableHead>
             <TableHead>Code</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Name Khmer</TableHead>
+            <TableHead>Title</TableHead>
+            <TableHead>Title Khmer</TableHead>
             <TableHead>Order Index</TableHead>
             <TableHead>Parent</TableHead>
             <TableHead>Status</TableHead>
@@ -76,27 +94,27 @@ const TableData = async () => {
                     <MyNoImage iconWidth="w-10" />
                   )}
                 </TableCell>
-                <TableCell>{category.code || "--"}</TableCell>
-                <TableCell>{category.title || "--"}</TableCell>
-                <TableCell>{category.title_kh || "--"}</TableCell>
-                <TableCell>{category.order_index || "--"}</TableCell>
-                <TableCell>{category.parent_code || "--"}</TableCell>
+                <TableCell>{category.code || "---"}</TableCell>
+                <TableCell>{category.title || "---"}</TableCell>
+                <TableCell>{category.title_kh || "---"}</TableCell>
+                <TableCell>{category.order_index || "---"}</TableCell>
+                <TableCell>{category.parent_code || "---"}</TableCell>
                 <TableCell>
                   <StatusButton id={category.id} status={category.status} />
                 </TableCell>
                 <TableCell>
                   {moment(category.created_at).format("D-MMM-YYYY")}
                 </TableCell>
-                <TableCell>...</TableCell>
+                <TableCell>---</TableCell>
                 <TableCell>
                   {moment(category.updated_at).format("D-MMM-YYYY")}
                 </TableCell>
-                <TableCell>...</TableCell>
+                <TableCell>---</TableCell>
               </TableRow>
             ))
           ) : (
-            <TableRow>
-              <TableCell colSpan={13}>
+            <TableRow className="hover:bg-transparent">
+              <TableCell  colSpan={13}>
                 <MyNoDataIcon />
               </TableCell>
             </TableRow>

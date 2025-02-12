@@ -13,7 +13,7 @@ export default function RootLayout({
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <main className="px-4">
+        <main className="px-4 pb-12">
           {children}
         </main>
       </SidebarInset>

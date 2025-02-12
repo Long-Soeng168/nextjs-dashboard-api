@@ -63,7 +63,7 @@ export default function CreateCategoryForm() {
   const handleFetchCategories = async () => {
     try {
       setLoadingCategories(true);
-      const result = await fetchCategories({ perPage: "200" });
+      const result = await fetchCategories({ per_page: "200" });
       if (!result.data) {
         toast({
           title: "Fail fetching Categories.",
@@ -144,7 +144,7 @@ export default function CreateCategoryForm() {
       });
       form.reset();
       setFiles(null);
-      revalidateCategories("/dashboard/categories");
+      revalidateCategories("/dashboard/products/categories");
       setRefreshKey((prev) => prev + 1);
     } catch (error: any) {
       console.log(error);
@@ -179,7 +179,7 @@ export default function CreateCategoryForm() {
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Title</FormLabel>
                   <FormControl>
                     <Input placeholder="ex: Computer" type="text" {...field} />
                   </FormControl>
@@ -194,7 +194,7 @@ export default function CreateCategoryForm() {
               name="title_kh"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name Khmer</FormLabel>
+                  <FormLabel>Title Khmer</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="ex: កុំព្យូទ័រ"

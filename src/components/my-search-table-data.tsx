@@ -19,6 +19,7 @@ export function MySearchTableData() {
     const params = new URLSearchParams(window.location.search);
     if (debouncedSearch) {
       params.set("search", debouncedSearch);
+      params.set("page", "1");
     } else {
       params.delete("search");
     }
@@ -32,6 +33,7 @@ export function MySearchTableData() {
     const params = new URLSearchParams(window.location.search);
     if (search) {
       params.set("search", search);
+      params.set("page", "1");
     } else {
       params.delete("search");
     }
@@ -39,7 +41,10 @@ export function MySearchTableData() {
   };
 
   return (
-    <form onSubmit={handleSearchSubmit} className="flex rounded-lg p-1 border w-full max-w-sm items-center space-x-2">
+    <form
+      onSubmit={handleSearchSubmit}
+      className="flex rounded-lg p-1 border w-full max-w-sm items-center space-x-2"
+    >
       <Input
         type="search"
         value={search}
@@ -47,7 +52,9 @@ export function MySearchTableData() {
         className="shadow-none border-none"
         placeholder="Search..."
       />
-      <Button variant='outline' type="submit"><SearchIcon className="[&_svg]:size-2"/> Search</Button>
+      <Button variant="outline" type="submit">
+        <SearchIcon className="[&_svg]:size-2" /> Search
+      </Button>
     </form>
   );
 }

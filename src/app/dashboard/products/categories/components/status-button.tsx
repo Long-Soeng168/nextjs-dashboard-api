@@ -49,7 +49,7 @@ const StatusButton = ({ id, status }: { id: number; status: number }) => {
         title: "Update status successfully.",
         variant: "success",
       });
-      revalidateCategories("/dashboard/categories");
+      revalidateCategories("/dashboard/products/categories");
     } catch (err) {
       toast({
         title: `${err instanceof Error ? err.message : "Something went wrong"}`,
@@ -63,7 +63,7 @@ const StatusButton = ({ id, status }: { id: number; status: number }) => {
 
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-      <TooltipProvider delayDuration={0}>
+      <TooltipProvider delayDuration={300}>
         <Tooltip>
           <TooltipTrigger asChild>
             <AlertDialogTrigger className="cursor-pointer" asChild>

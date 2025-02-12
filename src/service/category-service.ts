@@ -1,15 +1,30 @@
 import { BASE_BACKEND_API_URL } from "@/config/env";
 
 export async function fetchCategories({
-    perPage = "10",
+    per_page = "10",
     page = "1",
+    search = '',
+    sort_by = '',
+    parent_code = '',
+    status = '',
+    main_category = '0',
 }: {
-    perPage?: string;
+    per_page?: string;
     page?: string;
+    search?: string;
+    sort_by?: string;
+    parent_code?: string;
+    status?: string;
+    main_category?: string;
 } = {}) {
     const queryParams = new URLSearchParams({
-        perPage,
+        per_page,
         page,
+        search,
+        sort_by,
+        parent_code,
+        status,
+        main_category
     });
     try {
         const response = await fetch(`${BASE_BACKEND_API_URL}categories?${queryParams}`, {

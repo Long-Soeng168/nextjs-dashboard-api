@@ -44,7 +44,7 @@ const DeleteButton = ({ id }: { id: number }) => {
         title: "Deleted successfully.",
         variant: "success",
       });
-      revalidateCategories("/dashboard/categories");
+      revalidateCategories("/dashboard/products/categories");
     } catch (err) {
       toast({
         title: `${err instanceof Error ? err.message : "Something went wrong"}`,
@@ -58,7 +58,7 @@ const DeleteButton = ({ id }: { id: number }) => {
 
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-      <TooltipProvider delayDuration={0}>
+      <TooltipProvider delayDuration={300}>
         <Tooltip>
           <TooltipTrigger asChild>
             <AlertDialogTrigger asChild>
