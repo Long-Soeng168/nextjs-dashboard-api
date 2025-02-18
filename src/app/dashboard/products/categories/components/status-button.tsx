@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Trash2Icon } from "lucide-react";
 import { BASE_BACKEND_API_URL } from "@/config/env";
 import { useToast } from "@/hooks/use-toast";
-import { revalidateCategories } from "@/lib/revalidate";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,6 +21,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { clearCache } from "@/lib/clear-cache";
 
 const StatusButton = ({ id, status }: { id: number; status: number }) => {
   const { toast } = useToast();
@@ -49,7 +49,7 @@ const StatusButton = ({ id, status }: { id: number; status: number }) => {
         title: "Update status successfully.",
         variant: "success",
       });
-      revalidateCategories("/dashboard/products/categories");
+      clearCache("/dashboard/products/categories");
     } catch (err) {
       toast({
         title: `${err instanceof Error ? err.message : "Something went wrong"}`,

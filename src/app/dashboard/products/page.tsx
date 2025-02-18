@@ -13,7 +13,7 @@ import AddNewButton from "./components/add-new-button";
 import TableData from "./components/table-data";
 import { FilterButton } from "./components/filter-button";
 import { MySearchTableData } from "@/components/my-search-table-data";
-import MyLoadingAnimation from "./categories/components/my-loading-animation";
+import MyLoadingAnimation from "../../../components/my-loading-animation";
 
 const Page = () => {
   return (

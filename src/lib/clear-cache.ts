@@ -2,6 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 
-export async function revalidateCategories(path: string) {
+export async function clearCache(path: string) {
   revalidatePath(path, 'layout');
 }

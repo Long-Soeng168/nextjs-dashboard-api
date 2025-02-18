@@ -12,7 +12,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import AddNewButton from "./components/add-new-button";
 import TableData from "./components/table-data";
 import { FilterButton } from "./components/filter-button";
-import MyLoadingAnimation from "./components/my-loading-animation";
+import MyLoadingAnimation from "../../../../components/my-loading-animation";
 import { MySearchTableData } from "@/components/my-search-table-data";
 import MyFilterQueries from "@/components/my-filter-queries";
 

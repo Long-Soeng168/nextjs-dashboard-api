@@ -36,7 +36,6 @@ import {
   FileUploaderItem,
 } from "@/components/ui/file-upload";
 import { BASE_BACKEND_API_URL, CATEGORY_IMAGE_URL } from "@/config/env";
-import { revalidateCategories } from "@/lib/revalidate";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
 import { ErrorResponseType } from "@/types/error-respone-type";
@@ -44,7 +43,8 @@ import axios from "axios";
 import MyProgressBar from "@/components/my-progress-bar";
 import { fetchCategories, fetchCategory } from "@/service/category-service";
 import { Category } from "@/types/category-type";
-import MyLoadingAnimation from "../my-loading-animation";
+import MyLoadingAnimation from "../../../../../../components/my-loading-animation";
+import { clearCache } from "@/lib/clear-cache";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required").max(255),
@@ -181,7 +181,7 @@ export default function EditCategoryForm({ id }: { id: number }) {
       });
       form.reset();
       setFiles(null);
-      revalidateCategories("/dashboard/products/categories");
+      clearCache("/dashboard/products/categories");
       setRefreshKey((prev) => prev + 1);
     } catch (error: any) {
       console.log(error);

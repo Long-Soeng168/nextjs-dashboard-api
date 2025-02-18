@@ -30,7 +30,7 @@ import { Check, ChevronsUpDown, FilterIcon } from "lucide-react";
 import { fetchCategories } from "@/service/category-service";
 import { Category } from "@/types/category-type";
 import { useToast } from "@/hooks/use-toast";
-import MyLoadingAnimation from "../my-loading-animation";
+import MyLoadingAnimation from "../../../../../../components/my-loading-animation";
 import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
